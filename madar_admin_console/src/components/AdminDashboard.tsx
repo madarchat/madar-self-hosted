@@ -585,8 +585,10 @@ export function AdminDashboard({
       body: {
         title: bcTitle.trim(),
         body: bcBody.trim(),
-        ack_required: bcAckRequired,
-        priority: 'high',
+        // The core API accepts priority ∈ {info, important, mandatory_ack}
+        // and ack_type ∈ {view, scroll_ack, quiz_ack}.
+        priority: bcAckRequired ? 'mandatory_ack' : 'important',
+        ack_type: bcAckRequired ? 'scroll_ack' : 'view',
         target_spec: { scope: 'all' },
       },
     });
