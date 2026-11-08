@@ -1,0 +1,211 @@
+asyncapi: 2.6.0
+info:
+  title: Madar Realtime WebSocket Protocol (v1.0)
+  version: 1.0.0
+  description: >-
+    بروتوكول الأحداث اللحظية عبر WebSocket (/ws) لمنصة مدار الإصدار الأول (MADAR-SRS-SAD-1.0).
+    جميع الإطارات بصيغة JSON وتحتوي على الحقل `t` لتحديد نوع الإطار.
+  license:
+    name: CC-BY-4.0 / AGPL-3.0
+
+channels:
+  /ws:
+    description: قناة الاتصال اللحظي الموحدة (المصادقة عبر Header Authorization أو query token)
+    publish:
+      summary: إطارات يرسلها الوكيل إلى الخادم (Client -> Server)
+      message:
+        oneOf:
+          - $ref: '#/components/messages/PingFrame'
+          - $ref: '#/components/messages/SubFrame'
+          - $ref: '#/components/messages/MsgSendFrame'
+          - $ref: '#/components/messages/TypingFrame'
+          - $ref: '#/components/messages/ReadFrame'
+          - $ref: '#/components/messages/ReactFrame'
+          - $ref: '#/components/messages/PresenceUpdateFrame'
+          - $ref: '#/components/messages/CallSignalFrame'
+    subscribe:
+      summary: إطارات يدفعها الخادم إلى الوكيل (Server -> Client)
+      message:
+        oneOf:
+          - $ref: '#/components/messages/HelloFrame'
+          - $ref: '#/components/messages/PongFrame'
+          - $ref: '#/components/messages/MsgNewFrame'
+          - $ref: '#/components/messages/MsgEditFrame'
+          - $ref: '#/components/messages/MsgDelFrame'
+          - $ref: '#/components/messages/PresenceBroadcastFrame'
+          - $ref: '#/components/messages/PolicyUpdatedFrame'
+          - $ref: '#/components/messages/HubUpdatedFrame'
+          - $ref: '#/components/messages/BroadcastNewFrame'
+          - $ref: '#/components/messages/SessionRevokedFrame'
+          - $ref: '#/components/messages/WipeRequestFrame'
+
+components:
+  messages:
+    PingFrame:
+      payload:
+        type: object
+        required: [t]
+        properties:
+          t: { const: ping }
+    PongFrame:
+      payload:
+        type: object
+        required: [t, ts]
+        properties:
+          t: { const: pong }
+          ts: { type: integer }
+    HelloFrame:
+      payload:
+        type: object
+        required: [t, user_id, ts]
+        properties:
+          t: { const: hello }
+          user_id: { type: integer }
+          policy_version: { type: integer }
+          ts: { type: integer }
+    SubFrame:
+      payload:
+        type: object
+        required: [t, channels]
+        properties:
+          t: { const: sub }
+          channels:
+            type: array
+            items: { type: string }
+          after_seq:
+            type: object
+            additionalProperties: { type: integer }
+    MsgSendFrame:
+      payload:
+        type: object
+        required: [t, channel_id, body]
+        properties:
+          t: { const: msg.send }
+          req_id: { type: string }
+          channel_id: { type: string }
+          parent_id: { type: string, nullable: true }
+          client_msg_id: { type: string }
+          body: { type: string }
+    MsgNewFrame:
+      payload:
+        type: object
+        required: [t, channel_id, message]
+        properties:
+          t: { const: msg.new }
+          channel_id: { type: string }
+          seq: { type: integer }
+          message: { type: object }
+    MsgEditFrame:
+      payload:
+        type: object
+        required: [t, channel_id, message_id]
+        properties:
+          t: { const: msg.edit }
+          channel_id: { type: string }
+          message_id: { type: string }
+          body: { type: string }
+          edited_at: { type: string }
+    MsgDelFrame:
+      payload:
+        type: object
+        required: [t, channel_id, message_id]
+        properties:
+          t: { const: msg.del }
+          channel_id: { type: string }
+          message_id: { type: string }
+    TypingFrame:
+      payload:
+        type: object
+        required: [t]
+        properties:
+          t: { const: typing }
+          channel_id: { type: string }
+          thread_id: { type: integer }
+          is_typing: { type: boolean }
+    ReadFrame:
+      payload:
+        type: object
+        required: [t]
+        properties:
+          t: { const: read }
+          channel_id: { type: string }
+          up_to_seq: { type: integer }
+    ReactFrame:
+      payload:
+        type: object
+        required: [t, channel_id, message_id, emoji]
+        properties:
+          t: { const: react }
+          channel_id: { type: string }
+          message_id: { type: string }
+          emoji: { type: string }
+    PresenceUpdateFrame:
+      payload:
+        type: object
+        required: [t, status]
+        properties:
+          t: { const: presence }
+          status:
+            type: string
+            enum: [available, in_meeting, focus, off_duty]
+          note: { type: string }
+          until: { type: string, nullable: true }
+    PresenceBroadcastFrame:
+      payload:
+        type: object
+        required: [t, user_id]
+        properties:
+          t: { const: presence }
+          user_id: { type: integer }
+          status: { type: string }
+          note: { type: string }
+          until: { type: string, nullable: true }
+    PolicyUpdatedFrame:
+      payload:
+        type: object
+        required: [t, policy_version]
+        properties:
+          t: { const: policy.updated }
+          policy_version: { type: integer }
+          bundle_jws: { type: string }
+    HubUpdatedFrame:
+      payload:
+        type: object
+        required: [t, reason]
+        properties:
+          t: { const: hub.updated }
+          reason:
+            type: string
+            enum: [broadcast, followup, mention, broadcast_ack]
+    BroadcastNewFrame:
+      payload:
+        type: object
+        required: [t, broadcast]
+        properties:
+          t: { const: broadcast.new }
+          broadcast: { type: object }
+    SessionRevokedFrame:
+      payload:
+        type: object
+        required: [t, reason]
+        properties:
+          t: { const: session.revoked }
+          device_id: { type: string }
+          reason: { type: string }
+    WipeRequestFrame:
+      payload:
+        type: object
+        required: [t, workspace_id, device_id]
+        properties:
+          t: { const: wipe.request }
+          workspace_id: { type: string }
+          device_id: { type: string }
+          reason: { type: string }
+    CallSignalFrame:
+      payload:
+        type: object
+        required: [t]
+        properties:
+          t:
+            type: string
+            enum: [call.invite, call.accept, call.decline, call.end, call.sdp, call.ice]

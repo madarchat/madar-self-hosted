@@ -1,0 +1,205 @@
+# Madar Self-Hosted Sovereign Workspace — Enterprise On-Premises Stack
+# Quick start:
+#   ./setup.sh
+# Or directly with Docker Compose:
+#   docker compose up -d --build
+
+name: madar-self-hosted
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: madar_workspace_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-madar}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-madar-local-change-me}
+      POSTGRES_DB: ${DB_NAME:-madar}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-madar} -d ${DB_NAME:-madar}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: madar_workspace_redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-madar-local-change-me}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-madar-local-change-me}"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-madar-local-change-me}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: bitnamilegacy/minio:2024.12.18
+    container_name: madar_workspace_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-madar}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-madar-local-change-me}
+      MINIO_DEFAULT_BUCKETS: ${MINIO_BUCKET:-madar-media}:download
+      MINIO_SERVER_URL: ${MINIO_SERVER_URL:-http://localhost:9000}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+    volumes:
+      - miniodata:/bitnami/minio/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  coturn:
+    image: coturn/coturn:4.6
+    container_name: madar_workspace_turn
+    restart: unless-stopped
+    ports:
+      - "${TURN_PORT:-3479}:${TURN_PORT:-3479}/udp"
+      - "${TURN_PORT:-3479}:${TURN_PORT:-3479}/tcp"
+      - "${TURN_MIN_PORT:-49160}-${TURN_MAX_PORT:-49200}:${TURN_MIN_PORT:-49160}-${TURN_MAX_PORT:-49200}/udp"
+    command: >
+      -n --log-file=stdout
+      --listening-port=${TURN_PORT:-3479}
+      --min-port=${TURN_MIN_PORT:-49160}
+      --max-port=${TURN_MAX_PORT:-49200}
+      --realm=madar
+      --use-auth-secret
+      --static-auth-secret=${TURN_SECRET:-madar-local-change-me}
+      --fingerprint --lt-cred-mech
+      --no-cli --no-tls --no-dtls
+      ${TURN_EXTERNAL_IP:+--external-ip=${TURN_EXTERNAL_IP}}
+
+  api:
+    build:
+      context: ./madar_server
+      dockerfile: Dockerfile
+    container_name: madar_workspace_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      NODE_ENV: ${NODE_ENV:-development}
+      DEPLOYMENT_PROFILE: workspace
+      PORT: 5025
+      HOST: 0.0.0.0
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:5025}
+      API_PREFIX: ${API_PREFIX:-/api/v1}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      LOG_ENABLE: ${LOG_ENABLE:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://madar:madar-local-change-me@postgres:5432/madar}
+      JWT_SECRET: ${JWT_SECRET:-madar-dev-secret-change-me}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-15m}
+      REFRESH_TOKEN_TTL_DAYS: ${REFRESH_TOKEN_TTL_DAYS:-30}
+      MADAR_MASTER_KEY: ${MADAR_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      MASTER_ENCRYPTION_KEY: ${MADAR_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      ADMIN_API_ENABLED: ${ADMIN_API_ENABLED:-true}
+      CONTROL_PLANE_KEY: ${CONTROL_PLANE_KEY:-madar-local-control-plane-key-change-me}
+      ADMIN_PLANE_SECRET: ${CONTROL_PLANE_KEY:-madar-local-control-plane-key-change-me}
+      CONTROL_PLANE_HMAC_SECRET: ${CONTROL_PLANE_HMAC_SECRET:-}
+      ADMIN_ALLOWED_IPS: ${ADMIN_ALLOWED_IPS:-}
+      WORKSPACE_DEFAULT_NAME: ${WORKSPACE_DEFAULT_NAME:-مؤسسة مدار}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-100}
+      REDIS_URL: ${REDIS_URL:-redis://:madar-local-change-me@redis:6379}
+      R2_ENABLED: ${R2_ENABLED:-true}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-madar}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-madar-local-change-me}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-madar-media}
+      R2_ENDPOINT: ${R2_ENDPOINT:-http://minio:9000}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-http://localhost:9000/madar-media}
+      CALL_RING_TIMEOUT_MS: ${CALL_RING_TIMEOUT_MS:-45000}
+      STUN_ENABLED: ${STUN_ENABLED:-true}
+      STUN_PORT: ${STUN_PORT:-3478}
+      ICE_PUBLIC_HOST: ${ICE_PUBLIC_HOST:-}
+      TURN_ENABLED: ${TURN_ENABLED:-true}
+      TURN_PORT: ${TURN_PORT:-3479}
+      TURN_SECRET: ${TURN_SECRET:-madar-local-change-me}
+      TURN_CREDENTIAL_TTL_SECONDS: ${TURN_CREDENTIAL_TTL_SECONDS:-86400}
+      PUSH_RELAY_URL: ${PUSH_RELAY_URL:-}
+      PUSH_RELAY_TOKEN: ${PUSH_RELAY_TOKEN:-}
+    ports:
+      - "${API_PORT:-5025}:5025"
+      - "${STUN_PORT:-3478}:${STUN_PORT:-3478}/udp"
+    volumes:
+      - uploads:/app/uploads
+      - ./specs:/specs:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5025/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  admin-console:
+    build:
+      context: ./madar_admin_console
+      dockerfile: Dockerfile
+    container_name: madar_workspace_admin_console
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      ADMIN_CONSOLE_PORT: 5030
+      ADMIN_CONSOLE_HOST: 0.0.0.0
+      MADAR_CORE_API_URL: http://api:5025
+      MADAR_SERVER_URL: http://api:5025
+      CONTROL_PLANE_KEY: ${CONTROL_PLANE_KEY:-madar-local-control-plane-key-change-me}
+      ADMIN_PLANE_SECRET: ${CONTROL_PLANE_KEY:-madar-local-control-plane-key-change-me}
+      CONTROL_PLANE_HMAC_SECRET: ${CONTROL_PLANE_HMAC_SECRET:-}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-madar-local-admin-session-secret-change-me}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - "${ADMIN_CONSOLE_PORT:-5030}:5030"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5030/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  caddy:
+    image: caddy:2
+    container_name: madar_workspace_caddy
+    restart: unless-stopped
+    profiles: ["tls"]
+    depends_on:
+      api:
+        condition: service_healthy
+      admin-console:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./.deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  uploads:
+  caddy_data:
+  caddy_config:

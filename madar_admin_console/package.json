@@ -1,0 +1,36 @@
+{
+  "name": "madar-admin-console",
+  "version": "1.1.0",
+  "description": "Isolated Control-Plane Web Admin Console & BFF Gateway for Madar Workspace (Next.js App Router, TypeScript, Tailwind CSS, EN/AR Bilingual)",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 5030",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 5030",
+    "start:bff": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "lucide-react": "^0.454.0",
+    "next": "14.2.15",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
+  },
+  "author": "Madar Team",
+  "license": "Apache-2.0"
+}

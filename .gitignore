@@ -1,0 +1,43 @@
+# Dependencies & Build Outputs
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+**/next-env.d.ts
+
+# Environment & Secrets (NEVER commit secrets)
+.env
+.env.*
+!.env.example
+!.env.setup.example
+**/.env
+**/.env.*
+!.env.setup.example
+!madar_server/.env.example
+!madar_server/.env.example
+.secrets/
+*.pem
+*.key
+*firebase-adminsdk*.json
+
+# Uploads, Deploy & Runtime Data
+madar_server/uploads/
+uploads/
+.deploy/
+logs/
+*.log
+*.pid
+workspacesmadar-self_deploy_logs.txt
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Private Keys & Service Accounts
+*.p8
+*firebase-adminsdk*.json
+.env
+*_deploy_logs.txt

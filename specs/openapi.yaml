@@ -1,0 +1,417 @@
+openapi: 3.1.0
+info:
+  title: Madar Unified Platform API (v1.0)
+  version: 1.0.0
+  description: >-
+    المواصفة المفتوحة لواجهات REST الخاصة بمنصة مدار (الإصدار الأول MADAR-SRS-SAD-1.0).
+    تغطي نواة المؤسسة مفتوحة المصدر (Workspace Profile) ومسار الحساب الشخصي (Personal Profile).
+  license:
+    name: CC-BY-4.0 / AGPL-3.0
+servers:
+  - url: /api/v1
+    description: المسار القياسي لواجهات مدار الإصدار الأول
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /server/info:
+    get:
+      summary: قدرات الخادم، وضع التشغيل، ومفاتيح التوقيع العامة
+      tags: [Discovery]
+      responses:
+        '200':
+          description: معلومات الخادم والملف التشغيلي
+  /workspace/public-info:
+    get:
+      summary: الهوية البصرية العامة للمؤسسة وطرق المصادقة المتاحة قبل الدخول
+      tags: [Discovery]
+      responses:
+        '200':
+          description: بيانات المؤسسة العامة (الاسم، الشعار، اللون، طرق الدخول)
+  /enroll/redeem:
+    post:
+      summary: استرداد رمز انضمام موقّع (JWS Ed25519) عبر QR أو رابط عميق
+      tags: [Enrollment]
+      responses:
+        '200':
+          description: تم التحقق من رمز الانضمام وإرجاع بيانات المؤسسة والمفتاح العام للسياسات
+  /enroll/manual:
+    post:
+      summary: بدء الانضمام اليدوي عبر عنوان الخادم ومعرف الموظف
+      tags: [Enrollment]
+      responses:
+        '200':
+          description: بيانات المؤسسة ومتطلبات المصادقة
+        '403':
+          description: التسجيل الذاتي مغلق في خادم المؤسسة
+  /auth/login:
+    post:
+      summary: تسجيل الدخول المؤسسي (كلمة مرور / OIDC / LDAP)
+      tags: [WorkspaceAuth]
+      responses:
+        '200':
+          description: نجاح المرحلة الأولى (إصدار جلسة كاملة أو طلب خطوة MFA/تغيير كلمة المرور المؤقتة)
+  /auth/mfa/setup:
+    post:
+      summary: تهيئة عامل TOTP وتوليد البذرة ورموز الاسترداد العشرة
+      tags: [WorkspaceAuth]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: بذرة TOTP ورموز الاسترداد لمرة واحدة
+  /auth/mfa/verify:
+    post:
+      summary: التحقق من رمز TOTP أو رمز استرداد وإصدار رموز الجلسة
+      tags: [WorkspaceAuth]
+      responses:
+        '200':
+          description: رموز الوصول والتحديث وحزمة السياسات الموقّعة
+  /auth/password/change:
+    post:
+      summary: تغيير كلمة المرور المؤقتة أو الحالية
+      tags: [WorkspaceAuth]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تم تحديث كلمة المرور بنجاح
+  /auth/refresh:
+    post:
+      summary: تدوير رمز التحديث (Rotating Refresh Token) مع كشف إعادة الاستخدام
+      tags: [WorkspaceAuth]
+      responses:
+        '200':
+          description: زوج رموز جديد
+  /auth/logout:
+    post:
+      summary: إنهاء الجلسة الحالية وإبطال عائلة رموز التحديث
+      tags: [WorkspaceAuth]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تم تسجيل الخروج
+  /policy/bundle:
+    get:
+      summary: جلب حزمة السياسات الفعالة للمستخدم موقّعة بـ JWS EdDSA
+      tags: [Policy]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: حزمة السياسات الفعالة وتوقيعها ومفاتيح القفل
+  /directory/departments:
+    get:
+      summary: شجرة الأقسام والوحدات التنظيمية
+      tags: [Directory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: شجرة الأقسام
+  /directory/users:
+    get:
+      summary: استعراض وبحث دليل الموظفين وفق نطاق وحقول السياسة
+      tags: [Directory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة الموظفين المقتطعة حسب directory.visible_fields
+  /directory/users/{id}:
+    get:
+      summary: بطاقة الموظف التفصيلية
+      tags: [Directory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: بطاقة الموظف
+  /presence:
+    put:
+      summary: تحديث حالة التواجد المهنية (available, in_meeting, focus, off_duty) مع ملاحظة ووقت انتهاء
+      tags: [Directory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: الحالة المحدثة
+  /channels:
+    get:
+      summary: قائمة قنوات المؤسسة والمحادثات المباشرة للمستخدم
+      tags: [Channels]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة القنوات
+    post:
+      summary: إنشاء قناة عمل أو محادثة مباشرة وفق PolicyGuard
+      tags: [Channels]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: القناة المنشأة
+  /channels/{id}/messages:
+    get:
+      summary: جلب رسائل القناة أو الموضوع الفرعي مع دعم المزامنة التفاضلية (after_seq)
+      tags: [Channels]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة الرسائل
+    post:
+      summary: إرسال رسالة في القناة أو الموضوع الفرعي
+      tags: [Channels]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: الرسالة المرسلة
+  /channels/{id}/memory:
+    get:
+      summary: جلب شريط وسجلات الذاكرة المؤسسية للقناة (قرارات، متابعات، مراجع)
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: عدادات وسجلات الذاكرة المؤسسية
+  /channels/{id}/decisions:
+    post:
+      summary: اعتماد قرار جديد مربوط برسالة داخل القناة
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: القرار المعتمد
+  /channels/{id}/followups:
+    post:
+      summary: إسناد متابعة جديدة لموظف مع تاريخ استحقاق
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: المتابعة المسندة
+  /followups/{id}:
+    patch:
+      summary: تحديث حالة المتابعة (open / done)
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: المتابعة المحدثة
+  /channels/{id}/references:
+    post:
+      summary: تثبيت مرجع (policy, guide, template, link) في القناة
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: المرجع المثبت
+  /channels/{id}/digest:
+    get:
+      summary: الملخص الأسبوعي للقرارات الجديدة والمتابعات المتأخرة والمغلقة في القناة
+      tags: [InstitutionalMemory]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: ملخص القناة الأسبوعي
+  /broadcasts:
+    get:
+      summary: قائمة التعاميم الموجهة للمستخدم أو المنشورة
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة التعاميم
+    post:
+      summary: نشر تعميم موثّق جديد مع التحقق من السقف الأسبوعي وتجميد المستهدفين
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: التعميم المنشور
+  /broadcasts/{id}:
+    get:
+      summary: تفاصيل التعميم وإصداره الحالي وحالة إقرار المستخدم
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تفاصيل التعميم
+    patch:
+      summary: تحديث التعميم (إنشاء إصدار جديد version_no وعند material_change إعادة طلب الإقرار)
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: الإصدار الجديد للتعميم
+  /broadcasts/{id}/ack:
+    post:
+      summary: تسجيل فتح التعميم أو إقراره (view, scroll_ack, quiz_ack)
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: إيصال الإقرار المسجل
+  /broadcasts/{id}/dashboard:
+    get:
+      summary: لوحة قياس الوصول الحية للتعميم مصنفة حسب الأقسام والحالة
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: إحصائيات الوصول والإقرار
+  /broadcasts/{id}/remind:
+    post:
+      summary: إرسال تذكير فوري بضغطة واحدة لغير المقرّين فقط
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: عدد الموظفين الذين تم تذكيرهم
+  /broadcasts/{id}/export:
+    get:
+      summary: تصدير سجل إقرارات التعميم بصيغة CSV أو PDF للامتثال
+      tags: [Broadcasts]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: ملف التقرير المصدر
+  /hub:
+    get:
+      summary: جلب عناصر المركز الموحّد مرتبة بالأولوية (تعاميم معلقة، متابعاتي، إشارات وردود)
+      tags: [Hub]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: أقسام المركز الثلاثة
+  /search:
+    get:
+      summary: بحث عربي شامل ومطبّع في الدليل والتعاميم والذاكرة والرسائل
+      tags: [Search]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: نتائج البحث المصنفة
+  /devices:
+    get:
+      summary: قائمة أجهزة المستخدم النشطة
+      tags: [Devices]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة الأجهزة
+  /devices/{id}/wipe-ack:
+    post:
+      summary: تأكيد إتمام المسح الانتقائي لخزنة المؤسسة على الجهاز
+      tags: [Devices]
+      responses:
+        '200':
+          description: تم توثيق المسح في سجل التدقيق
+  /users/me:
+    delete:
+      summary: حذف الحساب الشخصي نهائياً مع إزالة البيانات والمفاتيح والوسائط (PER-01)
+      tags: [Personal]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تم حذف الحساب نهائياً
+  /reports:
+    post:
+      summary: الإبلاغ عن رسالة أو حساب مسيء في المسار الشخصي (PER-03)
+      tags: [Personal]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: تم استلام البلاغ
+  /admin/overview:
+    get:
+      summary: لوحة المتابعة العامة للمؤسسة وصحة الخدمات
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: مؤشرات المؤسسة
+  /admin/users:
+    get:
+      summary: إدارة حسابات الموظفين والأدوار
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: قائمة الموظفين
+    post:
+      summary: إنشاء موظف جديد أو استيراد دفعة CSV
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: الحساب المنشأ
+  /admin/policies:
+    get:
+      summary: جلب السياسات على مستوى المؤسسة والمجموعات والاستثناءات
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: مصفوفة السياسات
+    put:
+      summary: تحديث السياسات وتوقيع نسخة جديدة وبث policy.updated
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: الإصدار الجديد للسياسة
+  /admin/policies/preview-impact:
+    post:
+      summary: معاينة أثر تعديل السياسة قبل حفظه (عدد الموظفين والأقسام المتأثرة)
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تقرير الأثر المتوقع
+  /admin/enrollment-tokens:
+    post:
+      summary: إصدار رمز انضمام موقّع (Single-use أو Multi-use) بصيغة JWS وبيانات QR
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: رمز الانضمام الموقّع ورابط QR
+  /admin/devices/{id}/revoke:
+    post:
+      summary: إبطال جهاز موظف أو طلب مسح انتقائي فوري لخزنة المؤسسة
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تم إبطال الجهاز وإرسال أمر المسح
+  /admin/audit-log:
+    get:
+      summary: استعراض وتصدير سجل التدقيق والتحقق من سلسلة التجزئة (COMPLIANCE_OFFICER)
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: سجلات التدقيق وحالة سلامة السلسلة
+  /admin/break-glass:
+    post:
+      summary: تقديم طلب وصول استثنائي مسبب ومحدود زمنياً (COMPLIANCE_OFFICER)
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: طلب Break-glass بانتظار موافقة EXEC_MANAGER
+  /admin/break-glass/{id}/approve:
+    post:
+      summary: الموافقة المزدوجة على طلب Break-glass مع التحقق من MFA (EXEC_MANAGER)
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '200':
+          description: تمت الموافقة وتفعيل نافذة الفحص المحدودة
+  /admin/legal-holds:
+    post:
+      summary: إنشاء تجميد قانوني يمنع حذف سجلات مستخدم أو قناة
+      tags: [Admin]
+      security: [{ BearerAuth: [] }]
+      responses:
+        '201':
+          description: التجميد القانوني المفعل
