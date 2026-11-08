@@ -41,3 +41,4 @@ Thumbs.db
 *firebase-adminsdk*.json
 .env
 *_deploy_logs.txt
+*.tsbuildinfo

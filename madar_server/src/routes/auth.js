@@ -288,7 +288,7 @@ authRouter.post(
         throw unauthorized('device_revoked', 'الجهاز غير نشط أو تم سحبه');
       }
       if (wsToken.account_status === 'suspended' || wsToken.account_status === 'offboarded') {
-        throw unauthorized('account_inactive', 'الحساب المؤسسي غير نشط');
+        throw unauthorized('account_inactive', 'حساب مساحة العمل غير نشط');
       }
 
       const resolved = await resolveEffectivePolicy(wsToken.workspace_id, wsToken.user_id, 'workspace');

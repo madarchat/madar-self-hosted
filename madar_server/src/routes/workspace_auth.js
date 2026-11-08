@@ -114,7 +114,7 @@ async function registerOrUpdateDevice({
   if (!allowedPlatforms.includes(platform)) {
     throw forbidden(
       'platform_not_allowed',
-      `المنصة (${platform}) غير مسموح بها بموجب سياسة المؤسسة (device.allowed_platforms)`,
+      `المنصة (${platform}) غير مسموح بها بموجب سياسة مساحة العمل (device.allowed_platforms)`,
     );
   }
 
@@ -122,7 +122,7 @@ async function registerOrUpdateDevice({
   if (effectivePolicies['device.require_attestation'] === true && attestationState !== 'verified') {
     throw forbidden(
       'attestation_required',
-      'تتطلب سياسة المؤسسة التحقق من سلامة الجهاز (device.require_attestation)',
+      'تتطلب سياسة مساحة العمل التحقق من سلامة الجهاز (device.require_attestation)',
     );
   }
 
@@ -148,7 +148,7 @@ async function registerOrUpdateDevice({
   if ((activeCountRow?.c || 0) >= maxDevices) {
     throw forbidden(
       'max_devices_reached',
-      `تم الوصول للحد الأقصى للأجهزة المسموح بها (${maxDevices}) بموجب سياسة المؤسسة (device.max_per_user)`,
+      `تم الوصول للحد الأقصى للأجهزة المسموح بها (${maxDevices}) بموجب سياسة مساحة العمل (device.max_per_user)`,
     );
   }
 
@@ -424,7 +424,7 @@ export async function handleEnrollment(req, res) {
   }
 
   if (user.account_status === 'suspended' || user.account_status === 'offboarded') {
-    throw forbidden('account_inactive', 'هذا الحساب المؤسسي غير نشط');
+    throw forbidden('account_inactive', 'حساب مساحة العمل هذا غير نشط');
   }
 
   if (tokenRow.default_group_id) {
@@ -449,7 +449,7 @@ export async function handleEnrollment(req, res) {
     if (!password || !verifyPassword(password, existingCred.password_hash)) {
       throw unauthorized(
         'invalid_credentials',
-        'كلمة المرور المؤسسية مطلوبة أو غير صحيحة لهذا الحساب عند استخدام رمز إلحاق عام',
+        'كلمة مرور مساحة العمل مطلوبة أو غير صحيحة لهذا الحساب عند استخدام رمز إلحاق عام',
       );
     }
   } else if (password) {
@@ -597,7 +597,7 @@ workspaceAuthRouter.post(
     }
 
     if (user.account_status === 'suspended' || user.account_status === 'offboarded') {
-      throw forbidden('account_inactive', 'تم تعليق هذا الحساب المؤسسي أو إنهاء صلاحيته');
+      throw forbidden('account_inactive', 'تم تعليق حساب مساحة العمل هذا أو إنهاء صلاحيته');
     }
 
     const resolved = await resolveEffectivePolicy(ws.id, user.id, 'workspace');
@@ -963,7 +963,7 @@ workspaceAuthRouter.post(
         );
 
     if (!providerRow) {
-      throw notFound('sso_provider_not_found', 'مزود الهوية المؤسسية (OIDC / SAML / LDAP) غير مفعل أو غير موجود');
+      throw notFound('sso_provider_not_found', 'مزود هوية مساحة العمل (OIDC / SAML / LDAP) غير مفعل أو غير موجود');
     }
 
     const configJson = JSON.parse(
@@ -1094,7 +1094,7 @@ workspaceAuthRouter.post(
     );
 
     if (user && (user.account_status === 'suspended' || user.account_status === 'offboarded')) {
-      throw forbidden('account_inactive', 'تم تعليق هذا الحساب المؤسسي أو إنهاء ارتباطه');
+      throw forbidden('account_inactive', 'تم تعليق حساب مساحة العمل هذا أو إنهاء ارتباطه');
     }
 
     if (!user) {

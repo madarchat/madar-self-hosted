@@ -24,7 +24,7 @@ export async function requireAuth(req, _res, next) {
         return next(unauthorized('device_revoked', 'الجهاز غير نشط أو تم إلغاء تفويضه'));
       }
       if (device.account_status === 'suspended' || device.account_status === 'offboarded') {
-        return next(unauthorized('account_inactive', 'تم إيقاف الحساب المؤسسي'));
+        return next(unauthorized('account_inactive', 'تم إيقاف حساب مساحة العمل'));
       }
 
       const wsId = payload.wid || device.workspace_id;

@@ -25,15 +25,15 @@ policyRouter.get(['/bundle', '/me'], requireAuth, attachPolicyContext, async (re
   const bundle = await buildSignedPolicyBundle(workspaceId, req.auth.userId, req.auth.profileType || 'workspace');
   const p = bundle.payload.policies;
 
-  // Build human-readable Arabic governance summary for "ما تديره مؤسستي" screen (POL-04)
+  // Build human-readable Arabic governance summary for "ما تديره مساحة عملي" screen (POL-04)
   const managedSummaryAr = {
     managed_by_institution: [
       `الاحتفاظ برسائل القنوات لمدة ${p['retention.message_days'] ?? p['retention.days'] ?? 365} يوم`,
       `الاحتفاظ بسجل التدقيق لمدة ${p['retention.audit_days'] ?? 730} يوم`,
-      p['dlp.allow_copy'] ? 'النسخ من المحادثات مسموح' : 'منع نسخ النصوص خارج المحادثات المؤسسية',
+      p['dlp.allow_copy'] ? 'النسخ من المحادثات مسموح' : 'منع نسخ النصوص خارج محادثات مساحة العمل',
       p['dlp.allow_external_share'] ? 'المشاركة الخارجية مسموحة' : 'منع مشاركة المحتوى والملفات خارج التطبيق',
       p['dlp.screenshot_policy'] === 'block' || p['security.screenshot_block']
-        ? 'حظر لقطات الشاشة وتسجيل الشاشة داخل الفضاء المؤسسي'
+        ? 'حظر لقطات الشاشة وتسجيل الشاشة داخل مساحة العمل'
         : p['dlp.screenshot_policy'] === 'audit'
           ? 'تسجيل حدث تدقيق عند أخذ لقطة شاشة'
           : 'لقطات الشاشة مسموحة',
@@ -41,8 +41,8 @@ policyRouter.get(['/bundle', '/me'], requireAuth, attachPolicyContext, async (re
       'إمكانية المسح الانتقائي لخزنة العمل فقط عند فقدان الجهاز أو انتهاء الخدمة',
     ],
     never_touched_by_institution: [
-      'لا تملك المؤسسة أي وصول إلى خزنتك الشخصية أو محادثاتك الخاصة في مدار',
-      'لا يمكن للمؤسسة الاطلاع على صورك أو ملفاتك أو جهات اتصالك على الهاتف',
+      'لا تملك إدارة مساحة العمل أي وصول إلى خزنتك الشخصية أو محادثاتك الخاصة في مدار',
+      'لا يمكن لإدارة مساحة العمل الاطلاع على صورك أو ملفاتك أو جهات اتصالك على الهاتف',
       'لا يتتبع التطبيق موقعك الجغرافي ولا يصل إلى الكاميرا أو الميكروفون في الخلفية',
       'المسح عن بُعد يقتصر حصرياً على خزنة العمل دون المساس بأي بيانات شخصية',
     ],

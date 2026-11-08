@@ -154,7 +154,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "السماح بالضيوف الخارجيين",
-      "description_ar": "السماح بإضافة حسابات خارج المؤسسة إلى القنوات"
+      "description_ar": "السماح بإضافة حسابات خارج مساحة العمل إلى القنوات"
     },
     {
       "key": "chat.max_attachment_mb",
@@ -231,7 +231,7 @@
       "lockable": true,
       "compliance_managed": false,
       "label_ar": "الأدوار المخولة بإنشاء قنوات",
-      "description_ar": "الأدوار المؤسسية التي يحق لها إنشاء قنوات عمل جديدة"
+      "description_ar": "أدوار مساحة العمل التي يحق لها إنشاء قنوات عمل جديدة"
     },
     {
       "key": "directory.visible_fields",
@@ -284,7 +284,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "وضع التشفير والامتثال",
-      "description_ar": "وضع التشفير المؤسسي: امتثال، سرية، أو تشفير طرفي موسع"
+      "description_ar": "وضع تشفير مساحة العمل: امتثال، سرية، أو تشفير طرفي موسع"
     },
     {
       "key": "security.screenshot_block",
@@ -305,7 +305,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "قفل التطبيق بالبصمة أو الرمز",
-      "description_ar": "إلزام المستخدم بقفل خزنة المؤسسة بالسمات الحيوية أو رمز الجهاز"
+      "description_ar": "إلزام المستخدم بقفل خزنة مساحة العمل بالسمات الحيوية أو رمز الجهاز"
     },
     {
       "key": "security.offline_block_hours",
@@ -317,7 +317,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "مهلة قفل الخزنة عند انقطاع الاتصال (ساعات)",
-      "description_ar": "عدد الساعات المسموح بها دون اتصال بالخادم قبل قفل خزنة المؤسسة مؤقتاً"
+      "description_ar": "عدد الساعات المسموح بها دون اتصال بالخادم قبل قفل خزنة مساحة العمل مؤقتاً"
     },
     {
       "key": "security.offline_wipe_days",
@@ -329,7 +329,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "مهلة المسح التلقائي عند انقطاع الاتصال (أيام)",
-      "description_ar": "عدد الأيام القصوى لانقطاع الاتصال قبل مسح خزنة المؤسسة المحلية تلقائياً"
+      "description_ar": "عدد الأيام القصوى لانقطاع الاتصال قبل مسح خزنة مساحة العمل المحلية تلقائياً"
     },
     {
       "key": "security.stale_policy_mode",
@@ -350,7 +350,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "تصدير المحادثات ومشاركتها خارجياً",
-      "description_ar": "السماح بنسخ أو تصدير محتوى العمل إلى خارج خزنة المؤسسة"
+      "description_ar": "السماح بنسخ أو تصدير محتوى العمل إلى خارج خزنة مساحة العمل"
     },
     {
       "key": "dlp.allow_copy",
@@ -360,7 +360,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "السماح بنسخ النصوص",
-      "description_ar": "السماح بنسخ النصوص من القنوات المؤسسية إلى الحافظة"
+      "description_ar": "السماح بنسخ النصوص من قنوات مساحة العمل إلى الحافظة"
     },
     {
       "key": "dlp.allow_copy_paste",
@@ -380,7 +380,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "السماح بالمشاركة الخارجية",
-      "description_ar": "السماح بمشاركة الملفات والنصوص خارج خزنة المؤسسة"
+      "description_ar": "السماح بمشاركة الملفات والنصوص خارج خزنة مساحة العمل"
     },
     {
       "key": "dlp.prevent_screenshots",
@@ -390,7 +390,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "منع لقطات الشاشة",
-      "description_ar": "تفعيل حظر التقاط الشاشة وتسجيلها داخل خزنة المؤسسة"
+      "description_ar": "تفعيل حظر التقاط الشاشة وتسجيلها داخل خزنة مساحة العمل"
     },
     {
       "key": "dlp.allow_screenshot",
@@ -400,7 +400,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "السماح بلقطات الشاشة",
-      "description_ar": "السماح بالتقاط الشاشة داخل خزنة المؤسسة"
+      "description_ar": "السماح بالتقاط الشاشة داخل خزنة مساحة العمل"
     },
     {
       "key": "dlp.watermark_enabled",
@@ -420,7 +420,7 @@
       "lockable": true,
       "compliance_managed": true,
       "label_ar": "فتح الخزنة بالسمات الحيوية",
-      "description_ar": "اشتراط التحقق بالبصمة أو الوجه عند فتح خزنة المؤسسة"
+      "description_ar": "اشتراط التحقق بالبصمة أو الوجه عند فتح خزنة مساحة العمل"
     },
     {
       "key": "dlp.screenshot_policy",

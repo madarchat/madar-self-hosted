@@ -66,7 +66,7 @@ async function seedWorkspace() {
 
   const ws = await db.one(
     `INSERT INTO workspace (name, locale, timezone, deployment_profile, setup_completed)
-     VALUES ('مؤسسة الاختبار', 'ar', 'Asia/Riyadh', 'workspace', TRUE) RETURNING id`,
+     VALUES ('مساحة عمل الاختبار', 'ar', 'Asia/Riyadh', 'workspace', TRUE) RETURNING id`,
   );
   const dept = await db.one(
     `INSERT INTO departments (workspace_id, name, code) VALUES ($1, 'الهندسة', 'ENG') RETURNING id`,
@@ -155,7 +155,7 @@ describe('sovereign workspace — enrollment and governance', () => {
     assert.equal(res.status, 200);
     const body = await res.json();
     assert.equal(body.workspace_id, fixtures.workspaceId);
-    assert.equal(body.name, 'مؤسسة الاختبار');
+    assert.equal(body.name, 'مساحة عمل الاختبار');
     assert.ok(!JSON.stringify(body).includes('EMP-001'), 'discovery must not expose employees');
   });
 

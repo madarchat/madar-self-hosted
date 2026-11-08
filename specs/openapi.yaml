@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: >-
     المواصفة المفتوحة لواجهات REST الخاصة بمنصة مدار (الإصدار الأول MADAR-SRS-SAD-1.0).
-    تغطي نواة المؤسسة مفتوحة المصدر (Workspace Profile) ومسار الحساب الشخصي (Personal Profile).
+    تغطي نواة مساحة العمل مفتوحة المصدر (Workspace Profile) ومسار الحساب الشخصي (Personal Profile).
   license:
     name: CC-BY-4.0 / AGPL-3.0
 servers:
@@ -28,30 +28,30 @@ paths:
           description: معلومات الخادم والملف التشغيلي
   /workspace/public-info:
     get:
-      summary: الهوية البصرية العامة للمؤسسة وطرق المصادقة المتاحة قبل الدخول
+      summary: الهوية البصرية العامة لمساحة العمل وطرق المصادقة المتاحة قبل الدخول
       tags: [Discovery]
       responses:
         '200':
-          description: بيانات المؤسسة العامة (الاسم، الشعار، اللون، طرق الدخول)
+          description: بيانات مساحة العمل العامة (الاسم، الشعار، اللون، طرق الدخول)
   /enroll/redeem:
     post:
       summary: استرداد رمز انضمام موقّع (JWS Ed25519) عبر QR أو رابط عميق
       tags: [Enrollment]
       responses:
         '200':
-          description: تم التحقق من رمز الانضمام وإرجاع بيانات المؤسسة والمفتاح العام للسياسات
+          description: تم التحقق من رمز الانضمام وإرجاع بيانات مساحة العمل والمفتاح العام للسياسات
   /enroll/manual:
     post:
       summary: بدء الانضمام اليدوي عبر عنوان الخادم ومعرف الموظف
       tags: [Enrollment]
       responses:
         '200':
-          description: بيانات المؤسسة ومتطلبات المصادقة
+          description: بيانات مساحة العمل ومتطلبات المصادقة
         '403':
-          description: التسجيل الذاتي مغلق في خادم المؤسسة
+          description: التسجيل الذاتي مغلق في خادم مساحة العمل
   /auth/login:
     post:
-      summary: تسجيل الدخول المؤسسي (كلمة مرور / OIDC / LDAP)
+      summary: تسجيل الدخول إلى مساحة العمل (كلمة مرور / OIDC / LDAP)
       tags: [WorkspaceAuth]
       responses:
         '200':
@@ -136,7 +136,7 @@ paths:
           description: الحالة المحدثة
   /channels:
     get:
-      summary: قائمة قنوات المؤسسة والمحادثات المباشرة للمستخدم
+      summary: قائمة قنوات مساحة العمل والمحادثات المباشرة للمستخدم
       tags: [Channels]
       security: [{ BearerAuth: [] }]
       responses:
@@ -166,12 +166,12 @@ paths:
           description: الرسالة المرسلة
   /channels/{id}/memory:
     get:
-      summary: جلب شريط وسجلات الذاكرة المؤسسية للقناة (قرارات، متابعات، مراجع)
+      summary: جلب شريط وسجلات ذاكرة مساحة العمل للقناة (قرارات، متابعات، مراجع)
       tags: [InstitutionalMemory]
       security: [{ BearerAuth: [] }]
       responses:
         '200':
-          description: عدادات وسجلات الذاكرة المؤسسية
+          description: عدادات وسجلات ذاكرة مساحة العمل
   /channels/{id}/decisions:
     post:
       summary: اعتماد قرار جديد مربوط برسالة داخل القناة
@@ -300,7 +300,7 @@ paths:
           description: قائمة الأجهزة
   /devices/{id}/wipe-ack:
     post:
-      summary: تأكيد إتمام المسح الانتقائي لخزنة المؤسسة على الجهاز
+      summary: تأكيد إتمام المسح الانتقائي لخزنة مساحة العمل على الجهاز
       tags: [Devices]
       responses:
         '200':
@@ -323,12 +323,12 @@ paths:
           description: تم استلام البلاغ
   /admin/overview:
     get:
-      summary: لوحة المتابعة العامة للمؤسسة وصحة الخدمات
+      summary: لوحة المتابعة العامة لمساحة العمل وصحة الخدمات
       tags: [Admin]
       security: [{ BearerAuth: [] }]
       responses:
         '200':
-          description: مؤشرات المؤسسة
+          description: مؤشرات مساحة العمل
   /admin/users:
     get:
       summary: إدارة حسابات الموظفين والأدوار
@@ -346,7 +346,7 @@ paths:
           description: الحساب المنشأ
   /admin/policies:
     get:
-      summary: جلب السياسات على مستوى المؤسسة والمجموعات والاستثناءات
+      summary: جلب السياسات على مستوى مساحة العمل والمجموعات والاستثناءات
       tags: [Admin]
       security: [{ BearerAuth: [] }]
       responses:
@@ -377,7 +377,7 @@ paths:
           description: رمز الانضمام الموقّع ورابط QR
   /admin/devices/{id}/revoke:
     post:
-      summary: إبطال جهاز موظف أو طلب مسح انتقائي فوري لخزنة المؤسسة
+      summary: إبطال جهاز موظف أو طلب مسح انتقائي فوري لخزنة مساحة العمل
       tags: [Admin]
       security: [{ BearerAuth: [] }]
       responses:

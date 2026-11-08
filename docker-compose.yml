@@ -114,7 +114,7 @@ services:
       ADMIN_PLANE_SECRET: ${CONTROL_PLANE_KEY:-madar-local-control-plane-key-change-me}
       CONTROL_PLANE_HMAC_SECRET: ${CONTROL_PLANE_HMAC_SECRET:-}
       ADMIN_ALLOWED_IPS: ${ADMIN_ALLOWED_IPS:-}
-      WORKSPACE_DEFAULT_NAME: ${WORKSPACE_DEFAULT_NAME:-مؤسسة مدار}
+      WORKSPACE_DEFAULT_NAME: ${WORKSPACE_DEFAULT_NAME:-مساحة عمل مدار}
       UPLOAD_DIR: /app/uploads
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-100}
       REDIS_URL: ${REDIS_URL:-redis://:madar-local-change-me@redis:6379}

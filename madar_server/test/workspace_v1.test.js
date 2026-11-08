@@ -538,7 +538,7 @@ describe('Madar Workspace v1.0 & Isolated Control Plane End-to-End Suite', () =>
       headers: cpHeaders,
       body: {
         scope_type: 'workspace',
-        reason: 'قفل النسخ واللصق على مستوى المؤسسة',
+        reason: 'قفل النسخ واللصق على مستوى مساحة العمل',
         changes: [{ key: 'dlp.allow_copy_paste', value: false, locked: true }],
       },
     });

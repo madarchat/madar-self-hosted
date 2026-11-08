@@ -96,7 +96,7 @@ export function FirstTimeSetupWizard({
       if (workspaceName.trim().length < 2) {
         setErrorMsg(
           locale === 'ar'
-            ? 'الرجاء إدخال اسم المؤسسة (حرفان على الأقل).'
+            ? 'الرجاء إدخال اسم مساحة العمل (حرفان على الأقل).'
             : 'Please enter your Organization / Workspace Name (at least 2 characters).',
         );
         return false;
@@ -127,7 +127,7 @@ export function FirstTimeSetupWizard({
       if (validDepts.length === 0) {
         setErrorMsg(
           locale === 'ar'
-            ? 'يرجى إضافة قسم واحد على الأقل لتجهيز قنوات المؤسسة.'
+            ? 'يرجى إضافة قسم واحد على الأقل لتجهيز قنوات مساحة العمل.'
             : 'Please keep at least one department to initialize your organization channels.',
         );
         return false;
@@ -652,7 +652,7 @@ export function FirstTimeSetupWizard({
                 <Lock className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
                 <div>
                   {locale === 'ar'
-                    ? 'تنبيه أمني: بمجرد النقر على زر الاعتماد أدناه، سيتم قفل صفحة التسجيل الأولي نهائياً، وتوليد مفاتيح التوقيع Ed25519 للمؤسسة، وتسجيل دخولك تلقائياً في لوحة التحكم مع رمز QR جاهز لالتحاق الموظفين.'
+                    ? 'تنبيه أمني: بمجرد النقر على زر الاعتماد أدناه، سيتم قفل صفحة التسجيل الأولي نهائياً، وتوليد مفاتيح التوقيع Ed25519 لمساحة العمل، وتسجيل دخولك تلقائياً في لوحة التحكم مع رمز QR جاهز لالتحاق الموظفين.'
                     : 'Security Notice: Clicking Initialize below permanently locks this first-time setup page, generates your Ed25519 workspace signing keys, signs you in as SUPER_ADMIN, and prepares your Employee Enrollment QR Code.'}
                 </div>
               </div>

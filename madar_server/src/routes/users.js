@@ -103,7 +103,7 @@ usersRouter.post(
 usersRouter.delete('/me', async (_req, _res) => {
   throw forbidden(
     'offboarding_is_administrative',
-    'حذف حساب مساحة العمل يتم عبر إدارة المؤسسة (إنهاء الخدمة)، وليس من التطبيق.',
+    'حذف حساب مساحة العمل يتم عبر إدارة مساحة العمل (إنهاء الخدمة)، وليس من التطبيق.',
   );
 });
 

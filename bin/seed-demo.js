@@ -134,7 +134,7 @@ async function main() {
     const ownerId = userIds['EMP-100'];
     await c.query(
       `INSERT INTO channels (workspace_id, kind, name, purpose, posting_mode, created_by)
-       VALUES ($1, 'announcement', 'التعاميم الرسمية', 'قناة التعاميم الرسمية للمؤسسة — النشر للإدارة فقط', 'moderators_only', $2)`,
+       VALUES ($1, 'announcement', 'التعاميم الرسمية', 'قناة التعاميم الرسمية لمساحة العمل — النشر للإدارة فقط', 'moderators_only', $2)`,
       [ws.id, ownerId],
     );
     for (const d of DEPARTMENTS) {

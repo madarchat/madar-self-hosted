@@ -142,7 +142,7 @@ export async function ensureDefaultWorkspace(client = db) {
       `INSERT INTO workspace (name, deployment_profile, setup_completed)
        VALUES ($1, $2, FALSE)
        RETURNING *`,
-      [env.WORKSPACE_DEFAULT_NAME || 'مؤسسة مدار', env.DEPLOYMENT_PROFILE || 'workspace'],
+      [env.WORKSPACE_DEFAULT_NAME || 'مساحة عمل مدار', env.DEPLOYMENT_PROFILE || 'workspace'],
     );
     ws = res.rows[0];
     await exec(
@@ -304,7 +304,7 @@ export async function resolveEffectivePolicy(workspaceId, userId = null, profile
  * Publishes a new policy version row in policy_versions and returns the version number.
  */
 export async function publishPolicyVersion({ workspaceId, publishedBy, reason, diffJson = {} }) {
-  const cleanReason = reason || 'تحديث السياسات المؤسسية';
+  const cleanReason = reason || 'تحديث سياسات مساحة العمل';
   const row = await db.one(
     `INSERT INTO policy_versions (workspace_id, summary, reason, diff_json, published_by, published_at)
      VALUES ($1, $2, $3, $4::jsonb, $5, NOW())

@@ -307,7 +307,7 @@ broadcastsRouter.post(
         if (!canOverride) {
           throw tooMany(
             'mandatory_broadcast_quota_exceeded',
-            `تم الوصول للحد الأقصى للتعاميم الإلزامية الأسبوعية (${maxPerWeek}) بموجب سياسة المؤسسة (broadcast.max_mandatory_per_week)`,
+            `تم الوصول للحد الأقصى للتعاميم الإلزامية الأسبوعية (${maxPerWeek}) بموجب سياسة مساحة العمل (broadcast.max_mandatory_per_week)`,
           );
         }
         await appendAuditLog({

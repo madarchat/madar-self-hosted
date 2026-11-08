@@ -47,7 +47,7 @@ export const env = {
     process.env.MADAR_MASTER_KEY ||
     (NODE_ENV === 'production' ? '' : '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'),
   MASTER_KEY_ID: process.env.MASTER_KEY_ID || 'mk-v1',
-  WORKSPACE_DEFAULT_NAME: process.env.WORKSPACE_DEFAULT_NAME || 'مؤسسة مدار',
+  WORKSPACE_DEFAULT_NAME: process.env.WORKSPACE_DEFAULT_NAME || 'مساحة عمل مدار',
 
   DATABASE_URL:
     process.env.DATABASE_URL ||

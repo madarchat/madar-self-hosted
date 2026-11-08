@@ -219,7 +219,7 @@ adminRouter.post(
           await client.query(
             `INSERT INTO channels (workspace_id, kind, name, description, posting_mode, created_by)
              VALUES
-               ($1, 'public_channel', 'عام — الساحة المؤسسية', 'القناة العامة لتواصل جميع فرق وإدارات المؤسسة', 'all', $2),
+               ($1, 'public_channel', 'عام — الساحة العامة', 'القناة العامة لتواصل جميع فرق وإدارات مساحة العمل', 'all', $2),
                ($1, 'broadcast_feed', 'الإعلانات والقرارات الرسمية', 'القناة الرسمية للقرارات المعتمدة والتعاميم التنظيمية', 'moderators_only', $2)`,
             [ws.id, createdAdmin?.id || null],
           );
@@ -1771,7 +1771,7 @@ adminRouter.put(
     body: z.object({
       scope_type: z.enum(['workspace', 'department', 'group', 'user']).default('workspace'),
       scope_id: z.string().optional(),
-      reason: z.string().trim().min(2).max(500).default('تحديث سياسات المؤسسة'),
+      reason: z.string().trim().min(2).max(500).default('تحديث سياسات مساحة العمل'),
       changes: z
         .array(
           z.object({
@@ -2683,7 +2683,7 @@ adminRouter.post(
   async (req, res) => {
     const ws = await ensureDefaultWorkspace();
     if (!ws.official_domain) {
-      throw badRequest('missing_official_domain', 'يرجى حفظ النطاق الرسمي للمؤسسة أولاً قبل التحقق');
+      throw badRequest('missing_official_domain', 'يرجى حفظ النطاق الرسمي لمساحة العمل أولاً قبل التحقق');
     }
     const verifyToken = ws.domain_verify_token || `mdr_${crypto.randomBytes(12).toString('hex')}`;
     const expectedTxt = `madar-domain-verify=${verifyToken}`;

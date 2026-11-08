@@ -157,7 +157,7 @@ channelsRouter.get('/', async (req, res) => {
     await db.query(
       `INSERT INTO channels (workspace_id, kind, name, description, posting_mode)
        VALUES
-         ($1, 'public_channel', 'عام — الساحة المؤسسية', 'القناة العامة لتواصل جميع فرق وإدارات المؤسسة', 'all'),
+         ($1, 'public_channel', 'عام — الساحة العامة', 'القناة العامة لتواصل جميع فرق وإدارات مساحة العمل', 'all'),
          ($1, 'broadcast_feed', 'الإعلانات والقرارات الرسمية', 'القناة الرسمية للقرارات المعتمدة والتعاميم التنظيمية', 'moderators_only')`,
       [wsId],
     );
@@ -223,9 +223,9 @@ channelsRouter.get('/', async (req, res) => {
       name: displayName,
       description:
         r.description ||
-        (isDm ? `محادثة مباشرة مع ${r.dm_peer_name || 'زميل'}` : 'قناة تواصل مؤسسي'),
+        (isDm ? `محادثة مباشرة مع ${r.dm_peer_name || 'زميل'}` : 'قناة تواصل رسمية'),
       department_id: r.department_id,
-      department_name: r.department_name || ( isDm ? 'محادثة مباشرة' : 'عام — المؤسسة'),
+      department_name: r.department_name || ( isDm ? 'محادثة مباشرة' : 'عام — مساحة العمل'),
       posting_mode: r.posting_mode || 'all',
       privacy_mode: r.privacy_mode || 'standard_governed',
       e2ee_epoch: Number(r.e2ee_epoch || 1),
@@ -279,7 +279,7 @@ channelsRouter.post(
       if (allowCreateGroup === false && !isAdmin) {
         throw forbidden(
           'group_creation_disabled',
-          'إنشاء القنوات والمجموعات غير متاح للمستخدمين العاديين بموجب سياسة المؤسسة (chat.allow_user_create_group)',
+          'إنشاء القنوات والمجموعات غير متاح للمستخدمين العاديين بموجب سياسة مساحة العمل (chat.allow_user_create_group)',
         );
       }
       if (!name) {
@@ -292,7 +292,7 @@ channelsRouter.post(
     if (allMembers.length > maxMembers) {
       throw badRequest(
         'max_group_members_exceeded',
-        `تجاوز عدد الأعضاء الحد الأقصى المسموح به (${maxMembers}) بموجب سياسة المؤسسة`,
+        `تجاوز عدد الأعضاء الحد الأقصى المسموح به (${maxMembers}) بموجب سياسة مساحة العمل`,
       );
     }
 
@@ -307,7 +307,7 @@ channelsRouter.post(
       if (guestRow) {
         throw forbidden(
           'external_guests_disabled',
-          'إضافة الضيوف الخارجيين غير مسموح بها بموجب سياسة المؤسسة (chat.allow_external_guests)',
+          'إضافة الضيوف الخارجيين غير مسموح بها بموجب سياسة مساحة العمل (chat.allow_external_guests)',
         );
       }
     }
@@ -601,7 +601,7 @@ channelsRouter.post(
     if ((msg_type === 'voice' || hasAudioAttachment) && allowVoiceNotes === false) {
       throw forbidden(
         'voice_notes_disabled',
-        'إرسال الرسائل الصوتية غير مسموح به بموجب سياسة المؤسسة (chat.allow_voice_notes)',
+        'إرسال الرسائل الصوتية غير مسموح به بموجب سياسة مساحة العمل (chat.allow_voice_notes)',
       );
     }
 
@@ -621,14 +621,14 @@ channelsRouter.post(
         throw new HttpError(
           413,
           'attachment_too_large',
-          `حجم المرفق يتجاوز الحد المسموح به (${maxAttachmentMb} ميجابايت) بموجب سياسة المؤسسة (chat.max_attachment_mb)`,
+          `حجم المرفق يتجاوز الحد المسموح به (${maxAttachmentMb} ميجابايت) بموجب سياسة مساحة العمل (chat.max_attachment_mb)`,
         );
       }
       if (!allowedMimes.includes(att.mime_type)) {
         throw new HttpError(
           415,
           'mime_type_not_allowed',
-          `نوع الملف (${att.mime_type}) غير مسموح به بموجب سياسة المؤسسة (chat.allowed_mime_types)`,
+          `نوع الملف (${att.mime_type}) غير مسموح به بموجب سياسة مساحة العمل (chat.allowed_mime_types)`,
         );
       }
     }
@@ -835,7 +835,7 @@ channelsRouter.patch(
     if (allowEditMinutes <= 0 || elapsedMinutes > allowEditMinutes) {
       throw forbidden(
         'edit_window_expired',
-        `انتهت المهلة المسموح بها لتعديل الرسالة (${allowEditMinutes} دقيقة) بموجب سياسة المؤسسة (chat.allow_message_edit_minutes)`,
+        `انتهت المهلة المسموح بها لتعديل الرسالة (${allowEditMinutes} دقيقة) بموجب سياسة مساحة العمل (chat.allow_message_edit_minutes)`,
       );
     }
 
@@ -899,7 +899,7 @@ channelsRouter.delete('/:id/messages/:msgId', async (req, res) => {
   if (deleteMode === 'none') {
     throw forbidden(
       'message_delete_disabled',
-      'حذف الرسائل غير مسموح به بموجب سياسة المؤسسة (chat.allow_message_delete = none)',
+      'حذف الرسائل غير مسموح به بموجب سياسة مساحة العمل (chat.allow_message_delete = none)',
     );
   }
 
@@ -962,7 +962,7 @@ channelsRouter.post(
     if (allowReactions === false) {
       throw forbidden(
         'reactions_disabled',
-        'التفاعلات التعبيرية معطلة بموجب سياسة المؤسسة (chat.allow_reactions)',
+        'التفاعلات التعبيرية معطلة بموجب سياسة مساحة العمل (chat.allow_reactions)',
       );
     }
 

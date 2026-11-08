@@ -1,6 +1,6 @@
 <div dir="rtl">
 
-# التثبيت والتشغيل — مدار للمؤسسات
+# التثبيت والتشغيل — مدار لمساحات العمل
 
 ---
 
@@ -13,7 +13,7 @@ git clone <repo> madar-self-hosted && cd madar-self-hosted
 ./setup.sh --docker          # يولّد الأسرار في .env ويشغّل كل الحاويات
 ```
 
-ثم افتح لوحة الإدارة وأكمل معالج **`/setup`**: هوية المؤسسة، المدير العام، قالب الحوكمة. عند الاعتماد يولّد الخادم مفتاح توقيع السياسات Ed25519 ويُقفل المعالج.
+ثم افتح لوحة الإدارة وأكمل معالج **`/setup`**: هوية مساحة العمل، المدير العام، قالب الحوكمة. عند الاعتماد يولّد الخادم مفتاح توقيع السياسات Ed25519 ويُقفل المعالج.
 
 ### خيارات `setup.sh`
 
@@ -21,7 +21,7 @@ git clone <repo> madar-self-hosted && cd madar-self-hosted
 | :--- | :--- |
 | `--docker` | كل شيء بالحاويات: PostgreSQL، Redis، MinIO، Coturn، الخادم، اللوحة |
 | `--native` | على المضيف مباشرة بـ Node و PostgreSQL محليين |
-| `--seed-admin` | إنشاء المؤسسة والمدير من سطر الأوامر بدل المعالج. الرقم الوظيفي للمدير من `ADMIN_USER` (افتراضياً `EMP-100`) |
+| `--seed-admin` | إنشاء مساحة العمل والمدير من سطر الأوامر بدل المعالج. الرقم الوظيفي للمدير من `ADMIN_USER` (افتراضياً `EMP-100`) |
 | `--reset-setup` | إعادة فتح معالج `/setup` |
 | `--non-interactive` | بلا أسئلة (من `.env.setup` أو القيم الافتراضية) |
 | `--update` | بعد `git pull`: إعادة البناء والتشغيل مع حفظ `.env` والبيانات |
@@ -45,12 +45,12 @@ git clone <repo> madar-self-hosted && cd madar-self-hosted
 
 ```bash
 cd madar_server && npm install && npm run migrate
-node ../bin/seed-demo.js --force   # مؤسسة «آفاق» (يمحو بيانات المؤسسة الحالية)
+node ../bin/seed-demo.js --force   # مساحة عمل «آفاق» (يمحو بيانات مساحة العمل الحالية)
 npm start                          # http://localhost:5025
 npm test                           # 34 اختباراً
 ```
 
-البذرة تطبع رابط `madar://enroll?...` جاهزاً للمسح من التطبيق، وبيانات الدخول. تفاصيل المؤسسة التجريبية (الموظفون، كلمات المرور، القنوات) في [SCENARIO_AFAQ_E2E_AR.md](SCENARIO_AFAQ_E2E_AR.md#المؤسسة-التجريبية).
+البذرة تطبع رابط `madar://enroll?...` جاهزاً للمسح من التطبيق، وبيانات الدخول. تفاصيل مساحة العمل التجريبية (الموظفون، كلمات المرور، القنوات) في [SCENARIO_AFAQ_E2E_AR.md](SCENARIO_AFAQ_E2E_AR.md#مساحة-العمل-التجريبية).
 
 ---
 
@@ -69,7 +69,7 @@ cd madar_server && node bin/madarctl.js <command>
 | `rotate-keys` | تدوير مفتاح توقيع السياسات |
 | `issue-enrollment [max_uses] [expires_hours]` | إصدار رمز انضمام |
 | `bootstrap [standard\|regulated\|defense]` | تطبيق قالب حوكمة |
-| `init-workspace --name … --admin-user … --admin-email … --admin-password … --preset …` | إنشاء المؤسسة والمدير |
+| `init-workspace --name … --admin-user … --admin-email … --admin-password … --preset …` | إنشاء مساحة العمل والمدير |
 
 **لا يوجد أمر نسخ احتياطي.** انظر §5.
 
@@ -77,11 +77,11 @@ cd madar_server && node bin/madarctl.js <command>
 
 ## 4. متغيرات البيئة
 
-القائمة الكاملة في `madar_server/src/config/env.js` و`docker-compose.yml`. ما يخص المؤسسات:
+القائمة الكاملة في `madar_server/src/config/env.js` و`docker-compose.yml`. ما يخص مساحات العمل:
 
 | المتغير | الغرض |
 | :--- | :--- |
-| `DEPLOYMENT_PROFILE=workspace` | يعطّل كل مسار لا يخص المؤسسات (مثل FCM المباشر) |
+| `DEPLOYMENT_PROFILE=workspace` | يعطّل كل مسار لا يخص مساحات العمل (مثل FCM المباشر) |
 | `DATABASE_URL`, `REDIS_URL` | البنية |
 | `JWT_SECRET`, `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL_DAYS` | الجلسات |
 | `MADAR_MASTER_KEY` | تشفير الحقول عند التخزين. **فقده = فقد كل الرسائل.** احفظه خارج الخادم |
@@ -113,11 +113,11 @@ cp .env  backup/   # فيه MADAR_MASTER_KEY — بدونه النسخة عدي�
 
 ## 6. النسخة التجريبية العامة
 
-تعمل نسخة تجريبية لمؤسسة «آفاق» على:
+تعمل نسخة تجريبية لمساحة عمل «آفاق» على:
 
 | الخدمة | النطاق |
 | :--- | :--- |
-| خادم المؤسسة | `workspace.protosoftdev.online` |
+| خادم مساحة العمل | `workspace.protosoftdev.online` |
 | لوحة الإدارة | `control.protosoftdev.online` |
 
 كلمات مرور النسخة العامة **ليست** الافتراضية الموجودة في `bin/seed-demo.js`؛ الافتراضية للتجربة المحلية فقط. عند تشغيل `seed-demo.js` على أي خادم مكشوف مرّر `--admin-password` و`--staff-password`.

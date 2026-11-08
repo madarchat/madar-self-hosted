@@ -117,7 +117,7 @@ export function AdminDashboard({
   const [smsWebhookUrl, setSmsWebhookUrl] = useState('');
   const [authProviders, setAuthProviders] = useState<any[]>([]);
   const [idpKind, setIdpKind] = useState<'ldap' | 'oidc' | 'saml'>('ldap');
-  const [idpName, setIdpName] = useState('Active Directory — المؤسسة');
+  const [idpName, setIdpName] = useState('Active Directory — مساحة العمل');
   const [idpConfigText, setIdpConfigText] = useState(
     '{\n  "ldap_url": "ldaps://ad.corp.local:636",\n  "base_dn": "dc=corp,dc=local",\n  "directory_entries": []\n}',
   );
@@ -327,7 +327,7 @@ export function AdminDashboard({
     showMessage(
       'success',
       locale === 'ar'
-        ? 'تم إنشاء القناة المؤسسية بنجاح!'
+        ? 'تم إنشاء قناة مساحة العمل بنجاح!'
         : 'Organizational channel created!',
     );
     loadAllData();
@@ -710,7 +710,7 @@ export function AdminDashboard({
     showMessage(
       'success',
       locale === 'ar'
-        ? 'تم ربط مزود الهوية المؤسسية (OIDC / SAML / LDAP) بنجاح!'
+        ? 'تم ربط مزود هوية مساحة العمل (OIDC / SAML / LDAP) بنجاح!'
         : 'Enterprise Identity Provider registered!',
     );
     loadAllData();
@@ -1136,7 +1136,7 @@ export function AdminDashboard({
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
                 <h3 className="font-bold text-base text-white mb-1">
                   {locale === 'ar'
-                    ? 'إنشاء قناة تواصل مؤسسية'
+                    ? 'إنشاء قناة تواصل رسمية'
                     : 'Create Organizational Channel'}
                 </h3>
                 <p className="text-xs text-slate-400 mb-4">
@@ -1202,7 +1202,7 @@ export function AdminDashboard({
                         onChange={(e) => setChannelDeptId(e.target.value)}
                         className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"
                       >
-                        <option value="">{locale === 'ar' ? 'عام للمؤسسة' : 'Workspace-wide'}</option>
+                        <option value="">{locale === 'ar' ? 'عام لمساحة العمل' : 'Workspace-wide'}</option>
                         {departments.map((d) => (
                           <option key={d.id} value={d.id}>
                             {d.name} ({d.code})
@@ -1220,7 +1220,7 @@ export function AdminDashboard({
                     />
                     <span>
                       {locale === 'ar'
-                        ? 'إضافة جميع موظفي المؤسسة النشطين تلقائياً'
+                        ? 'إضافة جميع موظفي مساحة العمل النشطين تلقائياً'
                         : 'Auto-join all active workspace employees'}
                     </span>
                   </label>
@@ -1228,14 +1228,14 @@ export function AdminDashboard({
                     type="submit"
                     className="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs transition"
                   >
-                    + {locale === 'ar' ? 'إنشاء القناة المؤسسية' : 'Create Organizational Channel'}
+                    + {locale === 'ar' ? 'إنشاء قناة مساحة العمل' : 'Create Organizational Channel'}
                   </button>
                 </form>
               </div>
 
               <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
                 <h3 className="font-bold text-base text-white mb-4">
-                  {locale === 'ar' ? 'القنوات المؤسسية النشطة والمؤرشفة' : 'Workspace Channels'} (
+                  {locale === 'ar' ? 'قنوات مساحة العمل النشطة والمؤرشفة' : 'Workspace Channels'} (
                   {channels.length})
                 </h3>
                 <div className="overflow-x-auto">
@@ -2212,7 +2212,7 @@ export function AdminDashboard({
                   <div>
                     <label className="block text-xs text-slate-300 mb-1">
                       {locale === 'ar'
-                        ? 'النطاق الرسمي للمؤسسة (Official Domain - ENR-06)'
+                        ? 'النطاق الرسمي لمساحة العمل (Official Domain - ENR-06)'
                         : 'Official Organization Domain'}
                     </label>
                     <input
@@ -2330,7 +2330,7 @@ export function AdminDashboard({
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                 <h3 className="font-bold text-base text-white">
                   {locale === 'ar'
-                    ? 'ربط الهوية المؤسسية ومزامنة الدليل النشط (OIDC / SAML / LDAP)'
+                    ? 'ربط هوية مساحة العمل ومزامنة الدليل النشط (OIDC / SAML / LDAP)'
                     : 'Enterprise Identity & Active Directory Sync (AUTH-01, AUTH-06)'}
                 </h3>
 

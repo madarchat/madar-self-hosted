@@ -14,7 +14,7 @@ export async function attachPolicyContext(req, _res, next) {
     );
     if (!user) return next();
     if (user.account_status === 'suspended' || user.account_status === 'offboarded') {
-      return next(forbidden('account_inactive', 'تم تعليق هذا الحساب المؤسسي أو إنهاء صلاحيته'));
+      return next(forbidden('account_inactive', 'تم تعليق حساب مساحة العمل هذا أو إنهاء صلاحيته'));
     }
 
     const roleRows = await db.many(
@@ -67,7 +67,7 @@ export function requirePolicy(
   policyKey,
   predicate = (val) => Boolean(val),
   errorCode = 'policy_denied',
-  errorMessage = `العملية مرفوضة بموجب السياسة المؤسسية (${policyKey})`,
+  errorMessage = `العملية مرفوضة بموجب سياسة مساحة العمل (${policyKey})`,
 ) {
   return async (req, res, next) => {
     if (!req.policy) {
@@ -144,7 +144,7 @@ export function assertPolicyEditPermission(userRoles, policyKey) {
  */
 export function assertAttachmentAllowed(policies = {}, { sizeBytes = 0, mimeType = '' } = {}) {
   if (policies['media.upload'] === false) {
-    throw forbidden('policy_media_upload_disabled', 'رفع المرفقات والوسائط معطل بموجب سياسة المؤسسة (media.upload)');
+    throw forbidden('policy_media_upload_disabled', 'رفع المرفقات والوسائط معطل بموجب سياسة مساحة العمل (media.upload)');
   }
 
   const maxMb = Number(policies['chat.max_attachment_mb'] ?? policies['media.max_mb'] ?? 25);
@@ -152,7 +152,7 @@ export function assertAttachmentAllowed(policies = {}, { sizeBytes = 0, mimeType
   if (sizeBytes > maxBytes) {
     throw badRequest(
       'attachment_too_large',
-      `حجم المرفق يتجاوز الحد المسموح به في سياسة المؤسسة (${maxMb} MB)`,
+      `حجم المرفق يتجاوز الحد المسموح به في سياسة مساحة العمل (${maxMb} MB)`,
     );
   }
 
@@ -180,7 +180,7 @@ export function assertAttachmentAllowed(policies = {}, { sizeBytes = 0, mimeType
     if (isCustomizedMimeList && !allowedTypes.includes(mime)) {
       throw forbidden(
         'policy_mime_type_denied',
-        `نوع الملف (${mime}) غير مسموح به بموجب سياسة المؤسسة (chat.allowed_mime_types)`,
+        `نوع الملف (${mime}) غير مسموح به بموجب سياسة مساحة العمل (chat.allowed_mime_types)`,
       );
     }
   }
@@ -220,7 +220,7 @@ export function assertAttachmentAllowed(policies = {}, { sizeBytes = 0, mimeType
   if (Array.isArray(allowedCategories) && !allowedCategories.includes(category)) {
     throw forbidden(
       'policy_mime_category_denied',
-      `فئة الملف (${category}: ${mime}) غير مسموح بها بموجب سياسة المؤسسة`,
+      `فئة الملف (${category}: ${mime}) غير مسموح بها بموجب سياسة مساحة العمل`,
     );
   }
 }
