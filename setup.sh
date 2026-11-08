@@ -251,6 +251,8 @@ PUBLIC_HOST=${PUBLIC_HOST}
 PUBLIC_URL=${PUBLIC_URL}
 API_PREFIX=/api/v1
 TRUST_PROXY=1
+# Extra browser origins allowed to call the API (comma-separated), e.g. a hosted Madar web client
+CORS_ORIGINS=${CORS_ORIGINS:-}
 
 # Workspace Defaults
 WORKSPACE_SLUG=${WORKSPACE_SLUG}
